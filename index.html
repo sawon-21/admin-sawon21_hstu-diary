@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Post Manager</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Amiri:wght@400;700&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6c5ce7;
+      --primary-light: #8577ef;
+      --dark: #0d0d1c;
+      --dark-light: #2d3436;
+      --card-bg: #2d3436;
+      --success: #00b894;
+      --danger: #d63031;
+      --warning: #fdcb6e;
+      --info: #0984e3;
+      --purple: #6c5ce7;
+      --pink: #fd79a8;
+      --orange: #e17055;
+      --teal: #00cec9;
+      --green: #00b894;
+      --blue: #74b9ff;
+      --yellow: #ffeaa7;
+    }
+    
+    body {
+      background-color: var(--dark);
+      color: white;
+      font-family: 'Hind Siliguri', sans-serif;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 900px;
+      padding: 20px;
+    }
+    
+    .post-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 15px;
+      transition: all 0.2s;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .post-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      border-color: var(--primary);
+    }
+    
+    .post-card.new {
+      border-left: 4px solid red;
+      background: rgba(108, 92, 231, 0.1);
+    }
+    
+    .tag {
+      background: #3d4a52;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      margin-right: 5px;
+      display: inline-block;
+      margin-bottom: 5px;
+      color: white;
+    }
+    
+    .form-control, .form-select {
+      background: var(--dark-light);
+      border: 1px solid #3d4a52;
+      color: white;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      background: var(--dark-light);
+      color: white;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.25rem rgba(108, 92, 231, 0.25);
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      border: none;
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-light);
+    }
+    
+    .upload-area {
+      border: 2px dashed #3d4a52;
+      border-radius: 10px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: rgba(45, 52, 54, 0.5);
+    }
+    
+    .upload-area:hover {
+      border-color: var(--primary);
+      background: rgba(108, 92, 231, 0.1);
+    }
+    
+    #imagePreview {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 5px;
+      display: none;
+      margin-top: 10px;
+      object-fit: contain;
+    }
+    
+    .time-badge {
+      font-size: 0.75rem;
+      background: rgba(255,255,255,0.1);
+      padding: 3px 10px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+form{
+  color:#888;
+}
+    /* Colorful filter buttons */
+    .filter-btn {
+      border: none;
+      border-radius: 20px;
+      padding: 8px 15px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      cursor: pointer;
+      margin-right: 5px;
+      margin-bottom: 5px;
+      color: white;
+    }
+    
+    .filter-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .filter-btn.active {
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transform: translateY(-2px);
+    }
+    
+    .filter-all { background: var(--primary); }
+    .filter-classes { background: var(--purple); }
+    .filter-notice { background: var(--blue); }
+    .filter-important { background: var(--danger); }
+    .filter-update { background: var(--teal); }
+    .filter-assignment { background: var(--warning); color: black; }
+    .filter-exam { background: var(--orange); }
+    .filter-resources { background: var(--green); }
+    .filter-event { background: var(--pink); }
+    .filter-tips { background: var(--info); }
+    .filter-world { background: #636e72; }
+    .filter-news { background: #74b9ff; }
+    .filter-latest { background: #a29bfe; }
+    .filter-sponsored { background: yellow; }
+    
+    .type-badge {
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 20px;
+      color: white;
+    }
+    
+    .badge-classes { background: var(--purple); }
+    .badge-notice { background: var(--blue); }
+    .badge-important { background: var(--danger); }
+    .badge-update { background: var(--teal); }
+    .badge-assignment { background: var(--warning); color: black; }
+    .badge-exam { background: var(--orange); }
+    .badge-resources { background: var(--green); }
+    .badge-event { background: var(--pink); }
+    .badge-tips { background: var(--info); }
+    .badge-world { background: #636e72; }
+    .badge-news { background: #74b9ff; }
+    .sponsored { background: yellow; }
+    
+    .filters-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .new-badge {
+      background: var(--primary);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      margin-left: 8px;
+    }
+/*Install Promt */
+    .install-prompt {
+      position:fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #00072D;
+      color: white;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.3s ease forwards;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .install-prompt h1 {
+      font-weight: bold;
+    }
+
+    .install-prompt p {
+      color: var(--primary-light);
+      max-width: 300px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @media (display-mode: standalone) {
+      .install-prompt {
+        display: none !important;
+      }
+    }
+    /* Floating particles background */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+    
+    .particle {
+      position: absolute;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      animation: float-particle 15s infinite linear;
+    }
+   /* install design buttons */ 
+    .filter-bar {
+  display: flex;
+  flex-wrap: wrap; /* allow buttons to go to next line if needed */
+  gap: 10px; /* space between buttons */
+  padding: 10px;
+  justify-content: center;
+  border-radius: 8px;
+  align-items:center;
+  max-width: 100%; /* full width */
+}
+
+.filter-bar > div {
+
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px; /* pill shape */
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px; /* space between icon and text */
+  transition: background-color 0.3s ease;
+  user-select: none; /* prevent text selection on click */
+}
+
+.filter-bar > div:hover {
+  background-color: #0056b3; /* darker blue on hover */
+}
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+      
+      .post-card {
+        padding: 15px;
+      }
+      
+      .upload-area {
+        padding: 20px;
+      }
+      
+      .filters-row {
+        gap: 5px;
+      }
+      
+      .filter-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Post Manager</h3>
+    <button class="btn btn-primary" id="newPostBtn">
+      <i class="bi bi-plus-lg"></i> New Post
+    </button>
+  </div>
+<script>
+    let deferredPrompt;
+
+    const promptHTML = `
+      <div class="install-prompt">
+        <h1 class="mb-3"><span style="color:#e17055">HSTU DIARY </span></h1>
+        <div class="filter-bar">
+          <div class="type-classes"><i class="bi bi-journal-bookmark"></i> Classes</div>
+          <div class="type-notice"><i class="bi bi-megaphone"></i> Notice</div>
+          <div class="type-important"><i class="bi bi-exclamation-triangle"></i> Important</div>
+          <div class="type-update"><i class="bi bi-arrow-up-circle"></i> Update</div>
+          <div class="type-assignment"><i class="bi bi-pencil-square"></i> Assignment</div>
+          <div class="type-exam"><i class="bi bi-file-earmark-text"></i> Exam</div>
+          <div class="type-resources"><i class="bi bi-folder2-open"></i> Resources</div>
+          <div class="type-event"><i class="bi bi-calendar-event"></i> Event</div>
+          <div class="type-tips"><i class="bi bi-lightbulb"></i> Tips</div>
+          <div class="type-world"><i class="bi bi-globe"></i> World</div>
+          <div class="type-news"><i class="bi bi-newspaper"></i> News</div>
+        </div>
+        <p class="mb-4">Get the best experience by installing our app on your device (Use Chrome Browser) </p>
+        <button id="install-button" class="btn btn-light btn-lg text-dark fw-bold">Install Now</button>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', promptHTML);
+
+    const promptElement = document.querySelector('.install-prompt');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+
+      // Show prompt immediately
+      promptElement.style.display = 'flex';
+
+      document.getElementById('install-button').addEventListener('click', () => {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+          } else {
+            console.log('User dismissed the install prompt');
+          }
+          promptElement.style.display = 'none';
+          deferredPrompt = null;
+        });
+      });
+    });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(() => console.log('ServiceWorker registration successful'))
+          .catch(err => console.log('ServiceWorker registration failed:', err));
+      });
+    }
+</script>
+  <!-- Create Post Form (Initially hidden) -->
+  <div class="card post-card mb-4" id="postFormContainer" style="display: none;">
+    <div class="card-body">
+      <h5 class="card-title">Create New Post</h5>
+      <form id="postForm">
+        <div class="mb-3">
+          <label class="form-label">Title</label>
+          <input type="text" class="form-control" id="postTitle" required>
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">Type</label>
+          <select class="form-select" id="postType" required>
+            <option value="" disabled selected>Select type</option>
+            <option value="classes">Classes</option>
+            <option value="notice">Notice</option>
+            <option value="important">Important</option>
+            <option value="update">Update</option>
+            <option value="assignment">Assignment</option>
+            <option value="exam">Exam</option>
+            <option value="resources">Resources</option>
+            <option value="event">Event</option>
+            <option value="tips">Tips</option>
+            <option value="world">World</option>
+            <option value="news">News</option>
+            <option value="sponsored">SPONSORED</option>
+          </select>
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">Content</label>
+          <textarea class="form-control" id="postContent" rows="3" required></textarea>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Link Title (optional)</label>
+            <input type="text" class="form-control" id="postLinkTitle">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Link URL (optional)</label>
+            <input type="url" class="form-control" id="postLinkUrl">
+          </div>
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">Tags (comma separated)</label>
+       <textarea class="form-control" id="postTags" rows="3" placeholder="urgent, homework, exam" required></textarea>
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">Image (optional)</label>
+          <div class="upload-area" id="uploadArea">
+            <i class="bi bi-cloud-arrow-up fs-3 mb-2"></i>
+            <p class="mb-0">Click to upload or drag & drop</p>
+            <input type="file" id="imageUpload" accept="image/*" class="d-none">
+          </div>
+          <img id="imagePreview" alt="Preview">
+        </div>
+        
+        <div class="d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-outline-secondary" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="card post-card mb-4">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Filters</h5>
+      
+      <div class="mb-3">
+        <input type="text" class="form-control" id="searchInput" placeholder="Search posts...">
+      </div>
+      
+      <div class="filters-row">
+        <button class="filter-btn filter-all active" data-filter="all">
+          <i class="bi bi-collection"></i> All
+        </button>
+        <button class="filter-btn filter-classes" data-filter="classes">
+          <i class="bi bi-journal-bookmark"></i> Classes
+        </button>
+        <button class="filter-btn filter-notice" data-filter="notice">
+          <i class="bi bi-megaphone"></i> Notice
+        </button>
+        <button class="filter-btn filter-important" data-filter="important">
+          <i class="bi bi-exclamation-triangle"></i> Important
+        </button>
+         <button class="filter-resources filter-btn" data-filter="resources">
+    <i class="bi bi-folder2-open"></i> Resources
+  </button>
+        <button class="filter-btn filter-exam" data-filter="exam">
+          <i class="bi bi-file-earmark-text"></i> Exam
+        </button>
+  <button class="filter-btn filter-assignment" data-filter="assignment">
+    <i class="bi bi-pencil-square"></i> Assignment
+  </button>
+        <button class="filter-btn filter-update" data-filter="update">
+          <i class="bi bi-arrow-up-circle"></i> Update
+        </button>
+          <button class="filter-event filter-btn" data-filter="event">
+    <i class="bi bi-calendar-event"></i> Event
+  </button>
+        <button class="filter-btn filter-tips" data-filter="tips">
+          <i class="bi bi-lightbulb"></i> Tips
+        </button>
+  <button class="filter-btn filter-world" data-filter="world">
+    <i class="bi bi-globe"></i> World
+  </button>
+  <button class="filter-news filter-btn" data-filter="news">
+    <i class="bi bi-newspaper"></i> News
+  </button> 
+        <button class="filter-btn filter-latest" id="latestFilterBtn">
+          <i class="bi bi-star"></i> Latest (2h)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Posts List -->
+  <div id="postsContainer">
+    <!-- Posts will be loaded here -->
+  </div>
+  
+  <!-- Empty State -->
+  <div class="text-center py-5" id="emptyState" style="display: none;">
+    <i class="bi bi-file-earmark-text fs-1"></i>
+    <h4 class="mt-3">No posts found</h4>
+    <p class="text-muted">Try adjusting your filters or create a new post</p>
+    <button class="btn btn-primary" id="createFirstPost">
+      <i class="bi bi-plus-lg me-2"></i>Create First Post
+    </button>
+  </div>
+</div>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyAkVqH_RnHoMSnEWtWlUVm3c0IGS04KjRI",
+    authDomain: "hstu-9bb0d.firebaseapp.com",
+    databaseURL: "https://hstu-9bb0d-default-rtdb.firebaseio.com",
+    projectId: "hstu-9bb0d",
+    storageBucket: "hstu-9bb0d.firebasestorage.app",
+    messagingSenderId: "115418123238",
+    appId: "1:115418123238:web:0ab52605bec3d8bd9fe427",
+    measurementId: "G-5XPHY7Z7WV"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+
+  // DOM Elements
+  const postForm = document.getElementById('postForm');
+  const postFormContainer = document.getElementById('postFormContainer');
+  const newPostBtn = document.getElementById('newPostBtn');
+  const cancelBtn = document.getElementById('cancelBtn');
+  const createFirstPost = document.getElementById('createFirstPost');
+  const postsContainer = document.getElementById('postsContainer');
+  const emptyState = document.getElementById('emptyState');
+  const uploadArea = document.getElementById('uploadArea');
+  const imageUpload = document.getElementById('imageUpload');
+  const imagePreview = document.getElementById('imagePreview');
+  const searchInput = document.getElementById('searchInput');
+  const filterButtons = document.querySelectorAll('.filter-btn[data-filter]');
+  const latestFilterBtn = document.getElementById('latestFilterBtn');
+
+  let posts = [];
+  let currentEditingPostId = null;
+  let currentFilter = 'all';
+  let showLatestOnly = false;
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    // Load posts from Firebase
+    loadPosts();
+    
+    // Show empty state initially (will be hidden if posts exist)
+    emptyState.style.display = 'block';
+    postsContainer.style.display = 'none';
+  });
+
+  // Load posts from Firebase
+  function loadPosts() {
+    database.ref('posts').on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        posts = Object.keys(data).map(key => ({
+          id: key,
+          ...data[key],
+          createdAt: data[key].createdAt || new Date().toISOString()
+        }));
+        renderPosts();
+        
+        if (posts.length > 0) {
+          emptyState.style.display = 'none';
+          postsContainer.style.display = 'block';
+        } else {
+          emptyState.style.display = 'block';
+          postsContainer.style.display = 'none';
+        }
+      } else {
+        posts = [];
+        emptyState.style.display = 'block';
+        postsContainer.style.display = 'none';
+      }
+    });
+  }
+
+  // Toggle post form visibility
+  newPostBtn.addEventListener('click', () => {
+    postFormContainer.style.display = 'block';
+    newPostBtn.style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  cancelBtn.addEventListener('click', () => {
+    resetForm();
+    postFormContainer.style.display = 'none';
+    newPostBtn.style.display = 'block';
+  });
+
+  createFirstPost.addEventListener('click', () => {
+    postFormContainer.style.display = 'block';
+    emptyState.style.display = 'none';
+    newPostBtn.style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Image upload handling
+  uploadArea.addEventListener('click', () => imageUpload.click());
+  
+  imageUpload.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        imagePreview.src = event.target.result;
+        imagePreview.style.display = 'block';
+        uploadArea.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Drag and drop for images
+  uploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadArea.style.borderColor = 'var(--primary)';
+    uploadArea.style.backgroundColor = 'rgba(108, 92, 231, 0.1)';
+  });
+
+  uploadArea.addEventListener('dragleave', () => {
+    uploadArea.style.borderColor = '#3d4a52';
+    uploadArea.style.backgroundColor = 'rgba(45, 52, 54, 0.5)';
+  });
+
+  uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.style.borderColor = '#3d4a52';
+    uploadArea.style.backgroundColor = 'rgba(45, 52, 54, 0.5)';
+    
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      imageUpload.files = e.dataTransfer.files;
+      const event = new Event('change');
+      imageUpload.dispatchEvent(event);
+    }
+  });
+
+  // Form submission
+  postForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const postData = {
+      title: document.getElementById('postTitle').value,
+      type: document.getElementById('postType').value,
+      content: document.getElementById('postContent').value,
+      linkTitle: document.getElementById('postLinkTitle').value,
+      linkUrl: document.getElementById('postLinkUrl').value,
+      tags: document.getElementById('postTags').value.split(',').map(tag => tag.trim()).filter(tag => tag),
+      image: imagePreview.style.display === 'block' ? imagePreview.src : null,
+      createdAt: new Date().toISOString()
+    };
+    
+    if (currentEditingPostId) {
+      // Update existing post in Firebase
+      database.ref(`posts/${currentEditingPostId}`).update(postData)
+        .then(() => {
+          showAlert('Post updated successfully!', 'success');
+          resetForm();
+        })
+        .catch((error) => {
+          showAlert('Error updating post: ' + error.message, 'danger');
+        });
+    } else {
+      // Add new post to Firebase
+      const newPostRef = database.ref('posts').push();
+      newPostRef.set(postData)
+        .then(() => {
+          showAlert('Post created successfully!', 'success');
+          resetForm();
+        })
+        .catch((error) => {
+          showAlert('Error creating post: ' + error.message, 'danger');
+        });
+    }
+  });
+
+  // Filter events
+  searchInput.addEventListener('input', renderPosts);
+  
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      showLatestOnly = false;
+      latestFilterBtn.classList.remove('active');
+      renderPosts();
+    });
+  });
+  
+  latestFilterBtn.addEventListener('click', () => {
+    showLatestOnly = !showLatestOnly;
+    latestFilterBtn.classList.toggle('active', showLatestOnly);
+    if (showLatestOnly) {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      currentFilter = 'all';
+    }
+    renderPosts();
+  });
+
+  // Render posts based on filters
+  function renderPosts() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const now = new Date();
+    const twoHoursAgo = new Date(now.getTime() - (2 * 60 * 60 * 1000));
+    
+    // Get the newest posts from the last 2 hours
+    const newPosts = posts
+      .filter(post => new Date(post.createdAt) > twoHoursAgo)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 3);
+    const filteredPosts = posts.filter(post => {
+      // Filter by search term (includes hidden tags)
+      const matchesSearch = 
+        post.title.toLowerCase().includes(searchTerm) ||
+        post.content.toLowerCase().includes(searchTerm) ||
+        (post.tags && post.tags.some(tag => tag.toLowerCase().includes(searchTerm)));
+      
+      // Filter by type
+      const matchesType = currentFilter === 'all' || post.type === currentFilter;
+      
+      // Filter by latest posts if enabled
+      const isNew = newPosts.some(newPost => newPost.id === post.id);
+      const matchesLatestFilter = !showLatestOnly || isNew;
+      
+      return matchesSearch && matchesType && matchesLatestFilter;
+    });
+    
+    // Sort by newest first, with new posts at the top
+    filteredPosts.sort((a, b) => {
+      const aIsNew = newPosts.some(p => p.id === a.id);
+      const bIsNew = newPosts.some(p => p.id === b.id);
+      
+      if (aIsNew && !bIsNew) return -1;
+      if (!aIsNew && bIsNew) return 1;
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+    
+    postsContainer.innerHTML = '';
+    
+    if (filteredPosts.length === 0) {
+      postsContainer.style.display = 'none';
+      emptyState.style.display = 'block';
+    } else {
+      postsContainer.style.display = 'block';
+      emptyState.style.display = 'none';
+      
+      filteredPosts.forEach(post => {
+        const isNew = newPosts.some(newPost => newPost.id === post.id);
+        
+        const postEl = document.createElement('div');
+        postEl.className = `post-card ${isNew ? 'new' : ''}`;
+        
+        postEl.innerHTML = `
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h5>${post.title} ${isNew ? '<span class="new-badge">NEW</span>' : ''}</h5>
+            <span class="type-badge badge-${post.type}">
+              ${post.type === 'notice' ? '<i class="bi bi-megaphone"></i>' : ''}
+              ${post.type === 'important' ? '<i class="bi bi-exclamation-triangle"></i>' : ''}
+              ${post.type === 'update' ? '<i class="bi bi-arrow-up-circle"></i>' : ''}
+              ${post.type === 'assignment' ? '<i class="bi bi-pencil"></i>' : ''}
+              ${post.type === 'classes' ? '<i class="bi bi-journal-bookmark"></i>' : ''}
+              ${post.type === 'exam' ? '<i class="bi bi-file-earmark-text"></i>' : ''}
+              ${post.type === 'resources' ? '<i class="bi bi-folder"></i>' : ''}
+              ${post.type === 'event' ? '<i class="bi bi-calendar-event"></i>' : ''}
+              ${post.type === 'tips' ? '<i class="bi bi-lightbulb"></i>' : ''}
+              ${post.type}
+            </span>
+          </div>
+          
+          <p class="text-info small mb-2">
+            <i class="bi bi-clock"></i> ${formatTimeAgo(new Date(post.createdAt))}
+          </p>
+          
+          <p class="mb-3">${post.content}</p>
+          
+          ${post.linkUrl ? `
+            <p class="mb-2">
+              <strong>Link:</strong> 
+              <a href="${post.linkUrl}" target="_blank" class="text-primary">${post.linkTitle || post.linkUrl}</a>
+            </p>
+          ` : ''}
+          
+          ${post.tags && post.tags.length > 0 ? `
+            <div class="mb-3">
+              ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+            </div>
+          ` : ''}
+          
+          ${post.image ? `
+            <div class="mb-3">
+              <img src="${post.image}" class="img-fluid rounded" style="max-height: 300px; object-fit: contain;">
+            </div>
+          ` : ''}
+          
+          <div class="d-flex justify-content-end gap-2">
+            <button class="btn btn-sm btn-outline-primary edit-btn" data-id="${post.id}">
+              <i class="bi bi-pencil"></i> Edit
+            </button>
+            <button class="btn btn-sm btn-outline-danger delete-btn" data-id="${post.id}">
+              <i class="bi bi-trash"></i> Delete
+            </button>
+          </div>
+        `;
+        postsContainer.appendChild(postEl);
+      });
+      
+      // Add event listeners to edit/delete buttons
+      document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => editPost(e.target.closest('button').dataset.id));
+      });
+      
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => deletePost(e.target.closest('button').dataset.id));
+      });
+    }
+  }
+
+  // Edit post
+  function editPost(postId) {
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+    
+    currentEditingPostId = postId;
+    
+    document.getElementById('postTitle').value = post.title;
+    document.getElementById('postType').value = post.type;
+    document.getElementById('postContent').value = post.content;
+    document.getElementById('postLinkTitle').value = post.linkTitle || '';
+    document.getElementById('postLinkUrl').value = post.linkUrl || '';
+    document.getElementById('postTags').value = post.tags ? post.tags.join(', ') : '';
+    
+    if (post.image) {
+      imagePreview.src = post.image;
+      imagePreview.style.display = 'block';
+      uploadArea.style.display = 'none';
+    } else {
+      imagePreview.style.display = 'none';
+      uploadArea.style.display = 'block';
+    }
+    
+    postFormContainer.style.display = 'block';
+    newPostBtn.style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Delete post
+  function deletePost(postId) {
+    if (confirm('Are you sure you want to delete this post?')) {
+      database.ref(`posts/${postId}`).remove()
+        .then(() => {
+          showAlert('Post deleted successfully!', 'success');
+        })
+        .catch((error) => {
+          showAlert('Error deleting post: ' + error.message, 'danger');
+        });
+    }
+  }
+
+  // Reset form
+  function resetForm() {
+    postForm.reset();
+    imagePreview.style.display = 'none';
+    uploadArea.style.display = 'block';
+    currentEditingPostId = null;
+    postFormContainer.style.display = 'none';
+    newPostBtn.style.display = 'block';
+  }
+
+  // Helper functions
+  function formatTimeAgo(date) {
+    const seconds = Math.floor((new Date() - date) / 1000);
+    
+    if (seconds < 60) return 'just now';
+    
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days}d ago`;
+    
+    const weeks = Math.floor(days / 7);
+    if (weeks < 4) return `${weeks}w ago`;
+    
+    const months = Math.floor(days / 30);
+    if (months < 12) return `${months}mo ago`;
+    
+    const years = Math.floor(days / 365);
+    return `${years}y ago`;
+  }
+
+  function showAlert(message, type) {
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type} position-fixed top-0 end-0 m-3`;
+    alert.textContent = message;
+    document.body.appendChild(alert);
+    
+    setTimeout(() => {
+      alert.classList.add('fade');
+      setTimeout(() => alert.remove(), 500);
+    }, 3000);
+  }
+</script>
+</body>
+</html>
