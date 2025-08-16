@@ -6,16 +6,16 @@
   "background_color": "#0f0e17",
   "theme_color": "#0f0e17",
   "description": "Best experience",
-  "icons": [
-    {
-      "src": "admin.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "admin.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+"icons": [
+  {
+    "src": "admin.jpg",
+    "sizes": "192x192",
+    "type": "image/jpeg"
+  },
+  {
+    "src": "admin.jpg",
+    "sizes": "512x512",
+    "type": "image/jpeg"
+  }
+]
 }
